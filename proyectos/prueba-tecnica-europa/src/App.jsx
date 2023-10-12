@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { UsersList } from './Components/UsersList'
 import './App.css'
 
@@ -9,13 +9,24 @@ function App () {
   const initialList = useRef([])
   const [filterCountry, setFilterCountry] = useState(null)
 
-  const filteredUsers = filterCountry
-    ? users.filter(user => user.location.country.toLowerCase().includes(filterCountry.toLowerCase())) 
-    : users
-  const sortedUsers = sortByCountry
-    ? filteredUsers.toSorted((a, b) => { return a.location.country.localeCompare(b.location.country) }) 
-    : filteredUsers
-  const restoreUsers = () => setUsers(initialList.current)
+  const filteredUsers = useMemo(() => {
+    return filterCountry
+      ? users.filter(user => user.location.country.toLowerCase().includes(filterCountry.toLowerCase()))
+      : users
+  }, [users, filterCountry])
+
+  const sortedUsers = useMemo(() => {
+    return sortByCountry
+      ? filteredUsers.toSorted((a, b) => {
+        return a.location.country.localeCompare(b.location.country)
+      })
+      : filteredUsers
+  }, [filteredUsers, sortByCountry])
+
+  const restoreUsers = () => {
+    setUsers(initialList.current)
+    setFilterCountry(null)
+  }
   const toggleColors = () => setShowColores(color => !color)
   const toggleSortByCountry = () => setSortByCountry(prevState => !prevState)
   const deleteUser = (userUUID) => {
