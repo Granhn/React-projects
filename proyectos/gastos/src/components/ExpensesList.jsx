@@ -1,7 +1,15 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable space-before-function-paren */
 /* eslint-disable react/react-in-jsx-scope */
+import ExpenseRow from './ExpenseRow'
 export default function ListaGastos({ category, expenses, deleteCategory }) {
   const hanndleDeleteCategory = () => deleteCategory(category)
+  const allCategories = expenses.map(expense => <ExpenseRow key={expense.name} expense={expense} />)
+  const filteredCategories = expenses.filter(expense => {
+    if (expense.category === category) return true
+    return false
+  })
+    .map(expense => <ExpenseRow key={expense.name} expense={expense} />)
   return (
     <>
       <h2>{category}</h2>
@@ -13,22 +21,9 @@ export default function ListaGastos({ category, expenses, deleteCategory }) {
           <th>Acciones</th>
         </thead>
         <tbody>
-          {expenses.map(expense => {
-            return (
-              <tr key={expense.name}>
-                <td>{expense.name}</td>
-                <td>{expense.amount}</td>
-                <td>{expense.category}</td>
-                <button onClick={hanndleDeleteCategory}>Eliminar</button>
-              </tr>
-            )
-          })}
-          <tr>
-            <td>
-              Dada
-            </td>
-          </tr>
-          { }
+          {category === 'All'
+            ? allCategories
+            : filteredCategories}
         </tbody>
       </table>
     </>
